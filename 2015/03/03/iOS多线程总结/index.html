@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        iOS GCD使用总结 · zeus blog
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.8);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171218 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >zeus blog</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">iOS GCD使用总结</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>zeus blog</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            iOS GCD使用总结
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2015/03/03</span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>GCD全称为Grand Centeral Dispatch，为iOS和OS X的多核硬件上执行提供控制，是异步执行任务的技术之一。<br>一般将应用程序中记述的线程管理用的代码在系统中的实现。开发者只需要定义想执行的任务并追加到适当的Dispatch Queue中，<br>GCD就能生成必要的线程并执行计划执行任务。由于线程管理是作为系统的一部分来实现的，因此可以统一管理，也可执行任务，这样就比以前的线程更有效率。<br>    也就是说，GCD用我们难以置信的非常简洁的记述方法，实现了极为复杂繁琐的多线程编程，可以说这是一项划时代的记述。下面是使用了GCD源码的例子，感受<br> GCD的威力。<br> <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">dispatch_async(queue,^&#123;</div><div class="line">   /*</div><div class="line">    * 长时间处理</div><div class="line">    *</div><div class="line">    * 例如AR用画像识别</div><div class="line">    * 例如数据库访问</div><div class="line">    */</div><div class="line"></div><div class="line">   /*</div><div class="line">     * 长时间处理结束，主线程中使用结果</div><div class="line">     */</div><div class="line">       dispatch_async(dispatch_get_main_queue(),^&#123;</div><div class="line"></div><div class="line">       &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>上面就是在后台线程中执行长时间处理，处理结束时，主线程使用该处理结果的源代码。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">dispatch_async(queue,^&#123;   //这仅有的一行表示让处理在后台线程中执行。</div><div class="line">dispatch_async(dispatch_get_main_queue(),^&#123; //这一行表示在主线程中执行</div></pre></td></tr></table></figure></p>
+<h2 id="Dispatch-Queue的种类"><a href="#Dispatch-Queue的种类" class="headerlink" title="Dispatch Queue的种类"></a>Dispatch Queue的种类</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">一种是等待现在执行中处理结束的Serial Dispatch Queue(串行队列），另一种是不等待现在执行中处理的Concurrent Dispatch Queue（并行队列）。</div></pre></td></tr></table></figure>
+<p>虽然有了Dispatch Queue的种类，但如何才能得到Dispatch Queue。</p>
+<h2 id="dispatch-queue-create"><a href="#dispatch-queue-create" class="headerlink" title="dispatch_queue_create"></a>dispatch_queue_create</h2><p>第一种方法是通过GCD的Api生成Dispatch Queue<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t mySerialDispatchQueue = dispatch_queue_create(<span class="string">"com.example.gcd.mySerialDispatchQueue"</span>,NULL);</div></pre></td></tr></table></figure></p>
+<p>Serial Dispatch Queue同时只能执行一个追加处理，但如果将处理分别追加到4个Serial Dispatch Queue中，各个Serial Dispatch Queue执行1个，即为同时执行4个处理<br>Serial Dispatch Queue只生成并使用一个线程，如果生成2000个Serial Dispatch Queue，那么就生成2000个线程，会消耗大量内存，大幅度降低系统的响应性能。<br>多个线程更新相同资源导致数据竞争时使用Serial Dispatch Queue<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t myConcurrentDispatchQueue = dispatch_queue_create(<span class="string">"com.example.gcd.myConcurrentDispatchQueue"</span>,DISPATCH_QUEUE_CONCURRENT);</div></pre></td></tr></table></figure></p>
+<p>dispatch_queue_create函数的返回值表示Dispatch Queue的”dispatch_queue_t类型”。</p>
+<h2 id="Main-Dispatch-Queue-Global-Dispatch-Queue"><a href="#Main-Dispatch-Queue-Global-Dispatch-Queue" class="headerlink" title="Main Dispatch Queue/Global Dispatch Queue"></a>Main Dispatch Queue/Global Dispatch Queue</h2><p>第二种方法是获取系统提供的Dispatch Queue。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Main Dispatch Queue主线程只有一个自然就是Serial Dispatch Queue；</div><div class="line">由于在主线程中执行，因此要将用户界面与界面更新的一些必须在主线程中执行的处理追加到Main Dispatch Queue使用</div><div class="line">dispatch_queue_t mainQueue = dispatch_get_main_queue();</div></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Global Dispatch Queue是所有程序都能够使用的Concurrent Dispatch Queue。另外，Global Dispatch Queue有4个执行优先级</div><div class="line">High Priority(高优先级)、Default Priority(默认优先级)、Low Priority(低优先级)、Background Priority(后台优先级)。</div><div class="line">dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH,0); //第一个参数表示优先级</div></pre></td></tr></table></figure>
+<h2 id="dispatch-set-target-queue"><a href="#dispatch-set-target-queue" class="headerlink" title="dispatch_set_target_queue"></a>dispatch_set_target_queue</h2><p>dispatch_queue_create函数生成的Dispatch Queue不管是Serial Dispatch Queue还是Concurrent Dispatch Queue,都使用默认优先级Global Dispatch Queue相同执行优先级的线程。而变更生成的Dispatch Queue的执行优先级要使用dispatch_set_target_queue函数。在后台执行动作处理的Serial Dispatch Queue的生成方法如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t mySerialDispatchQueue = dispatch_queue_create(<span class="string">"com.example.gcd.mySerialDispatchQueue"</span>,NULL);</div><div class="line">dispatch_queue_t globalQueueBackground = dispatch_queue_create(DISPATCH_QUEUE_PRIORITY_BACKGROUND,0);</div><div class="line">dispatch_set_target_queue(mySerialDispatchQueue,globalQueueBackground);</div></pre></td></tr></table></figure></p>
+<p>指定要变更优先级的Dispatch Queue为dispatch_set_target_queue函数的第一个参数目标，指定要使用的执行优先级相同优先级的Global Dispatch Queue为第二个参数<br>第一个参数不可指定为系统提供的Main Dispatch Queue或者Global Dispatch Queue</p>
+<h2 id="dispatch-after"><a href="#dispatch-after" class="headerlink" title="dispatch_after"></a>dispatch_after</h2><p>GCD延时加载函数<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW,3ull * NSEC_PER_SEC);</div><div class="line">dispatch_after(time,dispatch_get_main_queue(),^&#123;</div><div class="line">    NSLog(@<span class="string">"waited at least three seconds"</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>需要注意的是dispatch_after函数并不是在指定时间后执行处理，而只是在指定时间追加处理到Dispatch Queue。此段代码<br>在3秒后将dispatch_async函数追加Block到Main Dispatch Queue</p>
+<h2 id="Dispatch-Group"><a href="#Dispatch-Group" class="headerlink" title="Dispatch Group"></a>Dispatch Group</h2><p>在Dispatch Queue中的多个处理全部结束后想执行结束处理，就可以用的Dispatch Group使代码来的更简单。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);</div><div class="line">dispatch_group_t group = dispatch_group_create();</div><div class="line">dispatch_group_async(group,queue,^&#123;NSLog(@<span class="string">"b1k0"</span>);&#125;);</div><div class="line">dispatch_group_async(group,queue,^&#123;NSLog(@<span class="string">"b1k1"</span>);&#125;);</div><div class="line">dispatch_group_async(group,queue,^&#123;NSLog(@<span class="string">"b1k2"</span>);&#125;);</div><div class="line"></div><div class="line">dispatch_group_notify(group,dispatch_get_main_queue(),^&#123;NSLog(@<span class="string">"done"</span>);&#125;);</div></pre></td></tr></table></figure></p>
+<p>在dispatch_group_notify函数中不管制定什么样的Dispatch Queue,属于Dispatch Group的全部处理再追加指定的Block时都已经执行结束。<br>另外，在Dispatch Group中也可以使用dispatch_group_wait函数仅等待全部处理执行结束。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);</div><div class="line">dispatch_group_t group = dispatch_group_create();</div><div class="line">dispatch_group_async(group,queue,^&#123;NSLog(@<span class="string">"b1k0"</span>);&#125;);</div><div class="line">dispatch_group_async(group,queue,^&#123;NSLog(@<span class="string">"b1k1"</span>);&#125;);</div><div class="line">dispatch_group_async(group,queue,^&#123;NSLog(@<span class="string">"b1k2"</span>);&#125;);</div><div class="line"></div><div class="line">dispatch_group_wait(group,DISPATCH_TIME_FOREVER);</div></pre></td></tr></table></figure></p>
+<p>dispatch_group_wait函数的第二个参数指定为等待时间属于dispatch_time_t类型的值<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">dispatch_time_t time =dispatch_time(DISPATCH_TIME_NOW,1ull * NSEC_PER_SEC);</div><div class="line">long result = dispatch_group_wait(group,time);</div><div class="line"><span class="keyword">if</span> (result == 0) &#123;</div><div class="line">    //属于group的全部处理执行结束</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">      //属于group的某一个处理还在执行中</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果dispatch_group_wait的返回值部位0，就意味着虽然过了指定的时间，但group的某一个处理还在执行中。若果为0，在全部处理结束<br>当等待时间为DISPATCH_TIME_FOREVER，由group的处理必定全部结束。</p>
+<h2 id="dispatch-barrier-async"><a href="#dispatch-barrier-async" class="headerlink" title="dispatch_barrier_async"></a>dispatch_barrier_async</h2><p>在访问数据库时，前面说了可以用Serial Dispatch Queue避免数据竞争。写入处理确实不可与其他的写入处理以及包含<br>读取处理的其他某些处理并行执行。但是如果读取处理只是与读取处理并行执行，就不会有问题了。<br>也就是说为了高效的访问，读取处理追加到Concurrent Dispatch Queue中，写入处理在任一个读取处理没有执行的状态下<br>追加到Serial Dispatch Queue中即可.<br>虽然用Dispatch Group和dispatch_set_target_queue函数可以实现但代码复杂，这里GCD为我们提供了一个简单的方法<br> <strong>dispatch_barrier_async</strong><br> <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">首先生成一个Concurrent Dispatch Queue在queue中追加读取处理</div><div class="line">dispatch_queue_t queue = dispatch_queue_create(<span class="string">"com.example.gcd.forBarrier"</span>,DISPATCH_QUEUE_CONCURRENT);</div><div class="line"></div><div class="line">dispatch_async(queue,b1k0_for_reading);</div><div class="line">dispatch_async(queue,b1k1_for_reading);</div><div class="line">dispatch_async(queue,b1k2_for_reading);</div><div class="line">dispatch_async(queue,b1k3_for_reading);</div><div class="line"></div><div class="line">dispatch_barrier_async(queue,blk_for_writing)</div><div class="line"></div><div class="line">dispatch_async(queue,b1k4_for_reading);</div><div class="line">dispatch_async(queue,b1k5_for_reading);</div><div class="line">dispatch_async(queue,b1k6_for_reading);</div><div class="line">dispatch_async(queue,b1k7_for_reading);</div></pre></td></tr></table></figure></p>
+<h2 id="dispatch-sync"><a href="#dispatch-sync" class="headerlink" title="dispatch_sync"></a>dispatch_sync</h2><p>dispatch_async函数的”async”意味着”非同步”，就是将指定的Block”非同步”的追加到指定的Dispatch Queue中。<br>dispatch_async不作任何等待。<br>既然有”async”肯定就有”sync”，dispatch_sync就是将指定的Block”同步”追加到指定的Dispatch Queue中，再追加Block结束之前<br>，dispatch_sync函数会一直等待。</p>
+<h2 id="dispatch-apply"><a href="#dispatch-apply" class="headerlink" title="dispatch_apply"></a>dispatch_apply</h2><p>dispatch_apply函数是dispatch_sync函数和Dispatch Group的关联Api。该函数按指定的次数将指定的Block追加到指定的Dispatch Queue中，并等待全部处理执行结束</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0 );</div><div class="line">dispatch_apply(10,queue,^(size_t index) &#123;</div><div class="line">    NSLog(@<span class="string">"%zu"</span>,index);</div><div class="line">&#125;);</div><div class="line">NSLog(@<span class="string">"Done"</span>);</div></pre></td></tr></table></figure>
+<p>因为在Global Dispatch Queue中处理所以各个处理的执行时间不定。但是Done肯定在最后被输出。<br>第一个参数为重复次数，第二个参数为追加对象的Dispatch Queue，第三个参数为追加的处理。第三个参数的Block为带有参数的Block，这是为了<br>按第一个参数重复追击Block并区分各个Block而使用。<br>例如要对NSArray类对象的所有元素执行处理时，不必写for循环部分，如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);</div><div class="line">dispatch_apply([array count],queue,^(size_t index) &#123;</div><div class="line">    NSLog(@<span class="string">"%zu:%@"</span>,index,[array ObjectAtIndex:index]);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>这样就可以简单的在Global Dispatch Queue中对所有元素执行Block。<br>另外，由于dispatch_apply函数也与dispatch_sync函数相同，会等待处理执行结束，因此推荐在dispatch_async函数中非同步的执行dispatch_apply<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);</div><div class="line">//在Global Dispatch Queue中非同步执行</div><div class="line">dispatch_async(queue,^&#123;</div><div class="line">//等待dispatch_apply函数中全部处理执行结束</div><div class="line">    dispatch_apply([array count],queue,^(size_t index) &#123;</div><div class="line">            //并列处理包含在array中全部对象</div><div class="line">            NSLog(@<span class="string">"%zu:%@"</span>,index,[array ObjectAtIndex:index]);</div><div class="line">    &#125;);</div><div class="line">    //等待完毕之后在main中执行处理</div><div class="line">    dispatch_async（dispatch_get_main_queue(),^&#123;</div><div class="line">        NSLog(@<span class="string">"Done"</span>);</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h2 id="dispatch-suspend-dispatch-resume"><a href="#dispatch-suspend-dispatch-resume" class="headerlink" title="dispatch_suspend / dispatch_resume"></a>dispatch_suspend / dispatch_resume</h2><p>当追加大量处理到Dispatch Queue时，再追加处理的过程中，有时希望不执行已追加的处理。例如演算结果被Block截获时<br>，一些处理会对这个结果造成影响。在这种情况下，只要挂起Dispatch Queue即可，当可执行时在恢复。<br><strong>dispatch_suspend函数挂起指定的Dispatch Queue</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dispatch_suspend(queue);</div></pre></td></tr></table></figure></p>
+<p><strong>dispatch_resume函数恢复指定的Dispatch Queue</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dispatch_resume(queue);</div></pre></td></tr></table></figure></p>
+<p>这些函数对已经执行的处理没有影响。挂起后，追加到Dispatch Queue中但尚未执行的处理在此之后停止执行。而恢复则使得这些<br>处理继续进行</p>
+<h2 id="Dispatch-Semaphore"><a href="#Dispatch-Semaphore" class="headerlink" title="Dispatch Semaphore"></a>Dispatch Semaphore</h2><p>当并行执行的处理更新数据时，会产生数据不一致的情况，有事程序还会异常结束。虽然用Serial Dispatch Queue和dispatch_barrier_async函数<br>可以避免这类问题，但有必要进行更细粒度的排他控制。<br>例如：不考虑排序，将所有数据追加到NSMutableArray中。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);</div><div class="line"></div><div class="line">NSMutableArray *array = [[NSMutableArray alloc] init];</div><div class="line"><span class="keyword">for</span> (int i = 0; i &lt; 10000;i ++) &#123;</div><div class="line">    dispatch_async(queue,^&#123;</div><div class="line">        [array addObject:[NSNumber numberWithInt:i]];</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>因为使用Global Dispatch Queue更新NSMutableArray对象，所以执行后由内存错误导致程序异常结束额概率很高。<br>此时应使用Dispatch Semaphore。<br>Dispatch Semaphore是持有计数的信号，该计数是多线程编程中的计数类型信号。所谓信号，类似于过马路时常用<br>的手旗。可以通过时举起手旗，不过通过时放下。而在Dispatch Semaphore中，使用计数来实现该功能。计数为0时<br>等待，计数为1或大于1时，减去1而不等待。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dispatch_semaphore_t semphore = dispatch_semaphore_create(1);</div></pre></td></tr></table></figure></p>
+<p>参数表示计数的初始值。本例将计数值初始化为”1”。从函数名称中含有的create可以看出，该函数与Dispatch Queue<br>和Dispatch Group一样，必须通过dispatch_release函数释放。当然，也可以通过dispatch_retain函数持有。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dispatch_semaphore_wait(semaphore,DISPATCH_TIME_FOREVER);</div></pre></td></tr></table></figure></p>
+<p>dispatch_semaphore_wait函数等待Dispatch Semaphore的计数值达到大于或等于1。当计数值大于等于1，或者在待机中<br>计数值大于等于1时，对该计数进行减法并从dispatch_semaphore_wait函数返回。第二个参数与dispatch_group_wait<br>函数等相同，由dispatch_time_t类型值指定等待时间。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0);</div><div class="line">    / *</div><div class="line">       * 生成Dispatch Semaphore</div><div class="line">       *</div><div class="line">       * Dispatch Semaphore的计数初始值设定为<span class="string">"1"</span>。</div><div class="line">       *</div><div class="line">       * 保证可访问NSMutableArray类对象的线程同时只能有1个</div><div class="line">       *</div><div class="line">       */</div><div class="line">       dispatch_semaphore_t semaphore - dispatch_semaphore_create(1);</div><div class="line">       NSMutableArray *array = [[NSMutableArray alloc] init];</div><div class="line">       <span class="keyword">for</span> (int i = 0; i &lt; 10000; ++i) &#123;</div><div class="line">            dispatch_async(queue,^&#123;</div><div class="line">                /*</div><div class="line">                  * 等待Dispatch Semaphore</div><div class="line">                  *</div><div class="line">                  * 一直等待，直到Dispatch Semaphore的计数值达到大于等于1.</div><div class="line">                  */</div><div class="line">                  dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);</div><div class="line"></div><div class="line">                /*</div><div class="line">                  * 由于Dispatch Semaphore的计数值达到大于等于1</div><div class="line">                  * 所以将Dispatch Semaphore的计数值减去1，</div><div class="line">                  * dispatch_semaphore_wait函数执行返回。</div><div class="line">                  *</div><div class="line">                  * 即执行到此时的</div><div class="line">                  * Dispatch Semaphore的计数值恒为<span class="string">"0"</span>。</div><div class="line">                  *</div><div class="line">                  * 由于可访问NSMutableArray类对象的线程只有1个</div><div class="line">                  * 因此可安全地进行更新</div><div class="line">                  * /</div><div class="line"></div><div class="line">                  [array addObject:[NSNumber numberWithInt:i];</div><div class="line"></div><div class="line">                 /*</div><div class="line">                  * 排他控制处理结束，</div><div class="line">                  * 所以通过dispatch_semaphore_signal函数</div><div class="line">                  * 将Dispatch Semaphore的计数值加1。</div><div class="line">                  *</div><div class="line">                  * 如果通过dispatch_semaphore_wait函数</div><div class="line">                  * 等待Dispatch Semaphore的计数值增加的线程 就由最先等待的线程执行。</div><div class="line">                  *</div><div class="line">                  */</div><div class="line">                    dispatch_semaphore_signal(semaphore);</div><div class="line">            &#125;);</div><div class="line">       &#125;</div></pre></td></tr></table></figure></p>
+<p>在没有Serial Dispatch Queue和dispatch_barrier_async函数那么大粒度且一部分处理需要进行排他控制的情况下<br>，Dispatch Semaphore便可发挥威力。</p>
+<h2 id="dispatch-once"><a href="#dispatch-once" class="headerlink" title="dispatch_once"></a>dispatch_once</h2><p>dispatch_once函数应该是最常用的Api了。该函数是保证在应用程序执行一次指定处理的Api。下面这种经常出现的用来进行<br>初始化的源代码可通过dispatch_once函数简化。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">static int initialized = NO;</div><div class="line"><span class="keyword">if</span> (initialized == NO) &#123;</div><div class="line">    initialized = YES;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果使用dispatch_once，则可如下改写<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">static dispatch_once_t once;</div><div class="line">dispatch_once (&amp;once,^&#123;</div><div class="line"></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>iOS 单例模式<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">static id defaultManager = nil;</div><div class="line">- (id)defaultManager &#123;</div><div class="line">       static dispatch_once_t once;</div><div class="line">       dispatch_once(&amp;once,^&#123;</div><div class="line">        defaultManager = [[self alloc]init];</div><div class="line">       &#125;);</div><div class="line">    <span class="built_in">return</span> defaultManager;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="Dispatch-I-O"><a href="#Dispatch-I-O" class="headerlink" title="Dispatch I/O"></a>Dispatch I/O</h2><p>读取较大文件时，如果将文件分成合适的大小并使用Global Dispatch Queue并列读取的话，应该会比一般的读取速度快不少。<br>现今的输入/输出硬件已经可以做到一次使用多个线程更快地并列读取了。能实现这一功能的就是Dispatch I/O和Dispatch Data<br>通过Dispatch I/O读写文件时，使用Global Dispatch Queue将1个文件按某个大小read/write。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">dispatch_async(queue,^&#123;/*读取        0  ~  8191字节*/ &#125;);</div><div class="line">dispatch_async(queue,^&#123;/*读取   8192 ~ 16383字节*/ &#125;);</div><div class="line">dispatch_async(queue,^&#123;/*读取 16384 ~ 24575字节*/ &#125;);</div><div class="line">dispatch_async(queue,^&#123;/*读取 24576 ~ 32767字节*/ &#125;);</div><div class="line">dispatch_async(queue,^&#123;/*读取 32768~ 40959字节*/ &#125;);</div></pre></td></tr></table></figure></p>
+<p>可像上面这样，将文件分割为一块一块地进行读取处理。分割读取的数据通过使用Dispatch Data可进行更为简单地进行<br>结合和分割。<br>一下为苹果中使用Dispatch I/O的例子<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">pipe_q = dispatch_queue_create(<span class="string">"PipeQ"</span>,NULL);</div><div class="line">pipe_channel = dispatch_io_create(DISPATCH_IO_STREAM,fd,pipe_q,^(int err) &#123;</div><div class="line">    close(fd);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">*out_fd = fdpair[1];</div><div class="line"></div><div class="line">dispatch_io_set_low_water(pipe_channel,SIZE_MAX);</div><div class="line"></div><div class="line">dispatch_id_read(pipe_channel, 0, SIZE_MAX,pipe_q,^(bool <span class="keyword">done</span>, dispatch_data_t pipedata, int err) &#123;</div><div class="line">    <span class="keyword">if</span> (err == 0) &#123;</div><div class="line">        size_t len = dispatch_data_get_size(pipedata);</div><div class="line">        <span class="keyword">if</span> (len &gt; 0) &#123;</div><div class="line">            const char *bytes = NULL;</div><div class="line">            char *encoded;</div><div class="line"></div><div class="line">            dispatch_data_t md = dispatch_data_create_map(pipedata, (const void **)&amp;bytes, &amp;len);</div><div class="line">            encoded - asl_core_encode_buffer(bytes,len);</div><div class="line">            asl_set((aslmsg)merged_msg,ASL_KEY_AUX_DATA,encoded);</div><div class="line">            free(encoded);</div><div class="line">            _asl_send_message(NULL,merged_msg,-1,NULL);</div><div class="line">            asl_msg_release(merged_msg);</div><div class="line">            dispatch_release(md);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (<span class="keyword">done</span>) &#123;</div><div class="line">        dispatch_semaphore_signal(sem);</div><div class="line">        dispatch_release(pipe_channel);</div><div class="line">        dispatch_release(pipe_q);</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>dispatch_io_create函数生成Dispatch I/O，并指定发生错误时用来执行处理的Block，以及执行该Block的Dispatch<br>Queue。dispatch_io_set_low_water函数设定一次读取的大小（分割大小），dispatch_io_read函数使用Global<br>Dispatch Queue开始并列读取。每当各个分割的文件块读取结束时，将含有文件块数据的Dispatch Data传递给dispatch_io_read<br>函数指定的读取结束是回调用的Block。回调用的Block分析传递过来的Dispatch Data并进行结合处理。如果想提高文件<br>读取速度，可以尝试使用Dispatch I/O</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:1114388402@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/zcforios" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title="rss"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">Theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-Queue的种类"><span class="toc-number">1.</span> <span class="toc-text">Dispatch Queue的种类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-queue-create"><span class="toc-number">2.</span> <span class="toc-text">dispatch_queue_create</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Main-Dispatch-Queue-Global-Dispatch-Queue"><span class="toc-number">3.</span> <span class="toc-text">Main Dispatch Queue/Global Dispatch Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-set-target-queue"><span class="toc-number">4.</span> <span class="toc-text">dispatch_set_target_queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-after"><span class="toc-number">5.</span> <span class="toc-text">dispatch_after</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-Group"><span class="toc-number">6.</span> <span class="toc-text">Dispatch Group</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async"><span class="toc-number">7.</span> <span class="toc-text">dispatch_barrier_async</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-sync"><span class="toc-number">8.</span> <span class="toc-text">dispatch_sync</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-apply"><span class="toc-number">9.</span> <span class="toc-text">dispatch_apply</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-suspend-dispatch-resume"><span class="toc-number">10.</span> <span class="toc-text">dispatch_suspend / dispatch_resume</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-Semaphore"><span class="toc-number">11.</span> <span class="toc-text">Dispatch Semaphore</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-once"><span class="toc-number">12.</span> <span class="toc-text">dispatch_once</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-I-O"><span class="toc-number">13.</span> <span class="toc-text">Dispatch I/O</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>Archive</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>Tag</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> Total : 1 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2015/03/03/iOS多线程总结/" >iOS GCD使用总结</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
