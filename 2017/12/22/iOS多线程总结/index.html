@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
     <title>
         
-        fi3ework&#39;s Studio
+        iOS GCD使用总结 · fi3ework&#39;s Studio
         
     </title>
     <link rel="icon" href= /assets/favicon.ico>
@@ -71,7 +71,7 @@
                 <a href="/" >fi3ework&#39;s Studio.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name"></a>
+                <a href="#" class="post-name">iOS GCD使用总结</a>
             </div>
     </div>
     
@@ -92,7 +92,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            [Untitled Post]
+            iOS GCD使用总结
             <!-- 404 -->
             
         </h1>
@@ -181,8 +181,7 @@
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <hr>
-<h2 id="iOS-GCD使用总结"><a href="#iOS-GCD使用总结" class="headerlink" title="iOS GCD使用总结"></a>iOS GCD使用总结</h2><p>GCD全称为Grand Centeral Dispatch，为iOS和OS X的多核硬件上执行提供控制，是异步执行任务的技术之一。<br>一般将应用程序中记述的线程管理用的代码在系统中的实现。开发者只需要定义想执行的任务并追加到适当的Dispatch Queue中，<br>GCD就能生成必要的线程并执行计划执行任务。由于线程管理是作为系统的一部分来实现的，因此可以统一管理，也可执行任务，这样就比以前的线程更有效率。<br>    也就是说，GCD用我们难以置信的非常简洁的记述方法，实现了极为复杂繁琐的多线程编程，可以说这是一项划时代的记述。下面是使用了GCD源码的例子，感受<br> GCD的威力。<br> <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">dispatch_async(queue,^&#123;</div><div class="line">   /*</div><div class="line">    * 长时间处理</div><div class="line">    *</div><div class="line">    * 例如AR用画像识别</div><div class="line">    * 例如数据库访问</div><div class="line">    */</div><div class="line"></div><div class="line">   /*</div><div class="line">     * 长时间处理结束，主线程中使用结果</div><div class="line">     */</div><div class="line">       dispatch_async(dispatch_get_main_queue(),^&#123;</div><div class="line"></div><div class="line">       &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+        <p>GCD全称为Grand Centeral Dispatch，为iOS和OS X的多核硬件上执行提供控制，是异步执行任务的技术之一。<br>一般将应用程序中记述的线程管理用的代码在系统中的实现。开发者只需要定义想执行的任务并追加到适当的Dispatch Queue中，<br>GCD就能生成必要的线程并执行计划执行任务。由于线程管理是作为系统的一部分来实现的，因此可以统一管理，也可执行任务，这样就比以前的线程更有效率。<br>    也就是说，GCD用我们难以置信的非常简洁的记述方法，实现了极为复杂繁琐的多线程编程，可以说这是一项划时代的记述。下面是使用了GCD源码的例子，感受<br> GCD的威力。<br> <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">dispatch_async(queue,^&#123;</div><div class="line">   /*</div><div class="line">    * 长时间处理</div><div class="line">    *</div><div class="line">    * 例如AR用画像识别</div><div class="line">    * 例如数据库访问</div><div class="line">    */</div><div class="line"></div><div class="line">   /*</div><div class="line">     * 长时间处理结束，主线程中使用结果</div><div class="line">     */</div><div class="line">       dispatch_async(dispatch_get_main_queue(),^&#123;</div><div class="line"></div><div class="line">       &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
 <p>上面就是在后台线程中执行长时间处理，处理结束时，主线程使用该处理结果的源代码。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">dispatch_async(queue,^&#123;   //这仅有的一行表示让处理在后台线程中执行。</div><div class="line">dispatch_async(dispatch_get_main_queue(),^&#123; //这一行表示在主线程中执行</div></pre></td></tr></table></figure></p>
 <h2 id="Dispatch-Queue的种类"><a href="#Dispatch-Queue的种类" class="headerlink" title="Dispatch Queue的种类"></a>Dispatch Queue的种类</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">一种是等待现在执行中处理结束的Serial Dispatch Queue(串行队列），另一种是不等待现在执行中处理的Concurrent Dispatch Queue（并行队列）。</div></pre></td></tr></table></figure>
 <p>虽然有了Dispatch Queue的种类，但如何才能得到Dispatch Queue。</p>
@@ -292,7 +291,7 @@
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#iOS-GCD使用总结"><span class="toc-number">1.</span> <span class="toc-text">iOS GCD使用总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-Queue的种类"><span class="toc-number">2.</span> <span class="toc-text">Dispatch Queue的种类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-queue-create"><span class="toc-number">3.</span> <span class="toc-text">dispatch_queue_create</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Main-Dispatch-Queue-Global-Dispatch-Queue"><span class="toc-number">4.</span> <span class="toc-text">Main Dispatch Queue/Global Dispatch Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-set-target-queue"><span class="toc-number">5.</span> <span class="toc-text">dispatch_set_target_queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-after"><span class="toc-number">6.</span> <span class="toc-text">dispatch_after</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-Group"><span class="toc-number">7.</span> <span class="toc-text">Dispatch Group</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async"><span class="toc-number">8.</span> <span class="toc-text">dispatch_barrier_async</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-sync"><span class="toc-number">9.</span> <span class="toc-text">dispatch_sync</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-apply"><span class="toc-number">10.</span> <span class="toc-text">dispatch_apply</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-suspend-dispatch-resume"><span class="toc-number">11.</span> <span class="toc-text">dispatch_suspend / dispatch_resume</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-Semaphore"><span class="toc-number">12.</span> <span class="toc-text">Dispatch Semaphore</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-once"><span class="toc-number">13.</span> <span class="toc-text">dispatch_once</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-I-O"><span class="toc-number">14.</span> <span class="toc-text">Dispatch I/O</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-Queue的种类"><span class="toc-number">1.</span> <span class="toc-text">Dispatch Queue的种类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-queue-create"><span class="toc-number">2.</span> <span class="toc-text">dispatch_queue_create</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Main-Dispatch-Queue-Global-Dispatch-Queue"><span class="toc-number">3.</span> <span class="toc-text">Main Dispatch Queue/Global Dispatch Queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-set-target-queue"><span class="toc-number">4.</span> <span class="toc-text">dispatch_set_target_queue</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-after"><span class="toc-number">5.</span> <span class="toc-text">dispatch_after</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-Group"><span class="toc-number">6.</span> <span class="toc-text">Dispatch Group</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-barrier-async"><span class="toc-number">7.</span> <span class="toc-text">dispatch_barrier_async</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-sync"><span class="toc-number">8.</span> <span class="toc-text">dispatch_sync</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-apply"><span class="toc-number">9.</span> <span class="toc-text">dispatch_apply</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-suspend-dispatch-resume"><span class="toc-number">10.</span> <span class="toc-text">dispatch_suspend / dispatch_resume</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-Semaphore"><span class="toc-number">11.</span> <span class="toc-text">Dispatch Semaphore</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dispatch-once"><span class="toc-number">12.</span> <span class="toc-text">dispatch_once</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dispatch-I-O"><span class="toc-number">13.</span> <span class="toc-text">Dispatch I/O</span></a></li></ol>
     </div>
     
     <div class="back-top">&#xe639;</div>
@@ -331,13 +330,22 @@
     
     
     
-    <div class="archive-year"> 2017 </div>
+    <div class="archive-year"> Invalid date </div>
     <ul class="year-list">
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/22</span><a class="archive-post-title" href= "/2017/12/22/iOS多线程总结/" >[Untitled Post]</a>
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2017/12/22/iOS多线程总结/" >iOS GCD使用总结</a>
         </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
     
     
         <li class="archive-post-item">
