@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        WKWebView · zeus
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.8);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171218 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >zeus</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">WKWebView</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>zeus</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            WKWebView
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2015/10/20</span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>开发app的过程中，经常在内部使用UIWebView加载网页。这导致页面加载速度慢，占用内存多，优化困难。<br>如果加载网页多，还可能因为过量占用内存而导致崩溃。<br>iOS8以后苹果推出新框架Webkit，提供了替换UIWebView的组件WKWebView。<br>首先我们看一下WKWebView的特性：</p>
+<ol>
+<li>在性能、稳定性、功能方面有很多大提升；</li>
+<li>允许JavaScript的Nitro库加载</li>
+<li>支持更多的H5特性</li>
+<li>高达60fps的滚动刷新频率以及内置手势<h2 id="1-加载网页"><a href="#1-加载网页" class="headerlink" title="1.加载网页"></a>1.加载网页</h2>加载网页或HTML代码方式与UIWebView相同<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">WKWebView *webView = [[WKWebView alloc] initWithFrame:self.view.bounds];</div><div class="line">[webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@&quot;www.baidu.com&quot;]]];</div><div class="line">[self.view addSubview:webView];</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="2-加载的回调状态"><a href="#2-加载的回调状态" class="headerlink" title="2.加载的回调状态"></a>2.加载的回调状态</h2><p>用来追踪加载过程<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">// 页面开始加载时调用</div><div class="line">- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation;</div><div class="line">// 当内容开始返回时调用</div><div class="line">- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation;</div><div class="line">// 页面加载完成之后调用</div><div class="line">- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation;</div><div class="line">// 页面加载失败时调用</div><div class="line">- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation</div></pre></td></tr></table></figure></p>
+<p>页面跳转的代理方法<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// 接收到服务器跳转请求之后调用</div><div class="line">- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation;</div><div class="line">// 在收到响应后，决定是否跳转</div><div class="line">- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler;</div><div class="line">// 在发送请求之前，决定是否跳转</div><div class="line">- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction</div></pre></td></tr></table></figure></p>
+<h2 id="3-新的WKUIDelegate协议"><a href="#3-新的WKUIDelegate协议" class="headerlink" title="3.新的WKUIDelegate协议"></a>3.新的WKUIDelegate协议</h2><p>这个协议的主要用于WKWebView处理web界面的三种提示框(警告框、确认框、输入框)，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//警告框</div><div class="line">- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(void (^)())completionHandler;</div><div class="line">//确认框</div><div class="line">- (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler;</div><div class="line">//输入框</div><div class="line">- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * _Nullable))completionHandler;</div></pre></td></tr></table></figure></p>
+<p><strong><em>注意这个几个代理方法的回调不然会崩溃</em></strong></p>
+<h2 id="4-动态加载并运行JS代码"><a href="#4-动态加载并运行JS代码" class="headerlink" title="4.动态加载并运行JS代码"></a>4.动态加载并运行JS代码</h2><p>用于在客户端内部加入JS代码，并执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">// 图片缩放的js代码</div><div class="line">NSString *js = @&quot;var count = document.images.length;for (var i = 0; i &lt; count; i++) &#123;var image = document.images[i];image.style.width=320;&#125;;window.alert(&apos;找到&apos; + count + &apos;张图&apos;);&quot;;</div><div class="line">// 根据JS字符串初始化WKUserScript对象</div><div class="line">WKUserScript *script = [[WKUserScript alloc] initWithSource:js injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];</div><div class="line">// 根据生成的WKUserScript对象，初始化WKWebViewConfiguration</div><div class="line">WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];</div><div class="line">[config.userContentController addUserScript:script];</div><div class="line">_webView = [[WKWebView alloc] initWithFrame:self.view.bounds configuration:config];</div><div class="line">[_webView loadHTMLString:@&quot;&lt;head&gt;&lt;/head&gt;&lt;imgea src=&apos;http://www.nsu.edu.cn/v/2014v3/img/background/3.jpg&apos; /&gt;&quot;baseURL:nil];</div><div class="line">[self.view addSubview:_webView];</div></pre></td></tr></table></figure></p>
+<h2 id="5-webView执行JS代码"><a href="#5-webView执行JS代码" class="headerlink" title="5.webView执行JS代码"></a>5.webView执行JS代码</h2><p>用户调用用JS写过的代码，一般指服务端开发的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">//javaScriptString是JS方法名，completionHandler是异步回调block</div><div class="line">[self.webView evaluateJavaScript:javaScriptString completionHandler:completionHandler];</div></pre></td></tr></table></figure></p>
+<h2 id="6-JS调用App注册过的方法"><a href="#6-JS调用App注册过的方法" class="headerlink" title="6.JS调用App注册过的方法"></a>6.JS调用App注册过的方法</h2><p>在WKWebView里面注册供JS调用的方法，是通过WKUserContentController类下面的方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (void)addScriptMessageHandler:(id &lt;WKScriptMessageHandler&gt;)scriptMessageHandler name:(NSString *)name;</div></pre></td></tr></table></figure></p>
+<p>scriptMessageHandler是代理回调，JS调用name方法后，OC会调用scriptMessageHandler指定的对象。<br>JS在调用OC注册方法的时候要用下面的方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">window.webkit.messageHandlers.&lt;name&gt;.postMessage(&lt;messageBody&gt;)</div></pre></td></tr></table></figure></p>
+<p>注意，name（方法名）是放在中间的，messageBody只能是一个对象，如果要传多个值，需要封装成数组，或者字典<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">//OC注册供JS调用的方法</div><div class="line">[[_webView configuration].userContentController addScriptMessageHandler:self name:@&quot;closeMe&quot;];</div><div class="line"></div><div class="line">//OC在JS调用方法做的处理</div><div class="line">- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;JS 调用了 %@ 方法，传回参数 %@&quot;,message.name,message.body);</div><div class="line">&#125;</div><div class="line"></div><div class="line">//JS调用</div><div class="line">    window.webkit.messageHandlers.closeMe.postMessage(null);</div></pre></td></tr></table></figure></p>
+<p>如果你在self的dealloc大哥断点，会发现self没有释放！有如下解决方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">@interface WeakScriptMessageDelegate : NSObject&lt;WKScriptMessageHandler&gt;</div><div class="line"></div><div class="line">@property (nonatomic, weak) id&lt;WKScriptMessageHandler&gt; scriptDelegate;</div><div class="line"></div><div class="line">- (instancetype)initWithDelegate:(id&lt;WKScriptMessageHandler&gt;)scriptDelegate;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">@implementation WeakScriptMessageDelegate</div><div class="line"></div><div class="line">- (instancetype)initWithDelegate:(id&lt;WKScriptMessageHandler&gt;)scriptDelegate</div><div class="line">&#123;</div><div class="line">    self = [super init];</div><div class="line">    if (self) &#123;</div><div class="line">        _scriptDelegate = scriptDelegate;</div><div class="line">    &#125;</div><div class="line">    return self;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message</div><div class="line">&#123;</div><div class="line">    [self.scriptDelegate userContentController:userContentController didReceiveScriptMessage:message];</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>思路是另外创建一个代理对象，然后通过代理对象回调指定的self，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">WKUserContentController *userContentController = [[WKUserContentController alloc] init];</div><div class="line">[userContentController addScriptMessageHandler:[[WeakScriptMessageDelegate alloc] initWithDelegate:self] name:@&quot;closeMe&quot;];</div></pre></td></tr></table></figure></p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+            <li class="next">
+                <a href= "/2016/12/25/Cocoapods私有库静态包整理/" title= Cocoapods私有库与静态包整理 >
+                    <span>Next Post</span>
+                    <span>Cocoapods私有库与静态包整理</span>
+                </a>
+            </li>
+        
+        
+            <li class="previous">
+                <a href= "/2015/03/03/iOS多线程总结/" title= iOS GCD使用总结 >
+                    <span>Previous Post</span>
+                    <span>iOS GCD使用总结</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:1114388402@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/zcforios" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title="rss"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">Theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-加载网页"><span class="toc-number">1.</span> <span class="toc-text">1.加载网页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-加载的回调状态"><span class="toc-number">2.</span> <span class="toc-text">2.加载的回调状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-新的WKUIDelegate协议"><span class="toc-number">3.</span> <span class="toc-text">3.新的WKUIDelegate协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-动态加载并运行JS代码"><span class="toc-number">4.</span> <span class="toc-text">4.动态加载并运行JS代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-webView执行JS代码"><span class="toc-number">5.</span> <span class="toc-text">5.webView执行JS代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-JS调用App注册过的方法"><span class="toc-number">6.</span> <span class="toc-text">6.JS调用App注册过的方法</span></a></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>Archive</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>Tag</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> Total : 3 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/25</span><a class="archive-post-title" href= "/2016/12/25/Cocoapods私有库静态包整理/" >Cocoapods私有库与静态包整理</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/20</span><a class="archive-post-title" href= "/2015/10/20/WKWebView与js的交互/" >WKWebView</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2015/03/03/iOS多线程总结/" >iOS GCD使用总结</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
