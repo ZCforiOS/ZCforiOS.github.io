@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        Runtime黑魔法 · zeus
+        
+    </title>
+    <link rel="icon" href= /assets/zeus.jpg>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.8);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171218 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >zeus</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Runtime黑魔法</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>zeus</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(http://oumn0o088.bkt.clouddn.com/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Runtime黑魔法
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2018/01/30</span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h1><h2 id="什么是Runtime"><a href="#什么是Runtime" class="headerlink" title="什么是Runtime"></a>什么是Runtime</h2><p>OC是一门动态语言，在编译的时候最终都会转化成runtime的C语言代码；runtime是一套底层的C语言API，也是OC动态的幕后执行者。</p>
+<h3 id="Runtime可以做什么"><a href="#Runtime可以做什么" class="headerlink" title="Runtime可以做什么"></a>Runtime可以做什么</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">  [[NSObject alloc] init]</div><div class="line"></div><div class="line"> **runtime会在编译时做如下转化**</div><div class="line">objc_msgSend(objc_msgSend(<span class="string">"NSObject"</span>,<span class="string">"alloc"</span>),<span class="string">"init"</span>)</div></pre></td></tr></table></figure>
+<ol>
+<li>可以在运行过程中，动态创建一个类，或者给类别动态添加属性（类别不允许创建属性）</li>
+<li>可以在运行过程中，动态的交换方法。</li>
+<li>可以在运行过程中，防止程序找不到方法而引起崩溃（通过消息转发）</li>
+</ol>
+<h2 id="消息传递机制"><a href="#消息传递机制" class="headerlink" title="消息传递机制"></a>消息传递机制</h2><h3 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h3><p>OC在运行过程中才将消息跟实现绑定。编译器将消息表达式转化为一个消息传递函数objc_msgSend。这个函数将<br>接受者和在消息中提到的方法名（SEL）作为他的参数传递：objc_msgSend(receiver,selector)，如果函数含参，直接跟在<br>selector后面，使用”，”分隔。<br>因为receiver就是接受对象，当他收到一个消息时，就会沿着该对象的isa指针在查找到对应的selector方法，找到后执行，<br>如果在该对象中没有找到，会去父类的方法列表，如果一直找不到，该消息就会被传递给NSObject类。</p>
+<h3 id="使用隐藏参数"><a href="#使用隐藏参数" class="headerlink" title="使用隐藏参数"></a>使用隐藏参数</h3><p>当objc_msgSend找到selector时，会调用这个selector，传递消息中的所有参数，同时传递给程序两个隐藏参数：接收<br>对象和方法选择器，当代码被编译时他们被插入实现方法中</p>
+<h3 id="获取方法地址"><a href="#获取方法地址" class="headerlink" title="获取方法地址"></a>获取方法地址</h3><p>为了避免动态绑定的唯一方法是得到一个方法的地址，当他是函数的时候直接调用。一个定义在NSObject中的方法，<br>methodForSelector：，你可以要求一个指针指向它，然后通过指针来调用他。methodForSelector：这个指针必须<br>返回正确的函数类型。同时返回值和参数的类型也应该包含在内。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">void (*setter)(id,SEL,BOOL);</div><div class="line">int i ;</div><div class="line">setter = (void (*)(id, SEL,BOOl))[target methodForSelector:@selector(setFilled:)];</div><div class="line"><span class="keyword">for</span> (i = 0; i&lt; 1000; i++)</div><div class="line">    setter(targetList[i],@selector(setFilled:),YES);</div></pre></td></tr></table></figure></p>
+<p>首先两个参数传递给self方法选择器是_cmd的程序。这些参数被隐藏在方法的语法中但是在这个方法作为一个函数调用的时候必须明确。<br>使用methodForSelector：规避动态绑定可以节省大多数信息传递时间</p>
+<h2 id="动态方法解析"><a href="#动态方法解析" class="headerlink" title="动态方法解析"></a>动态方法解析</h2><h3 id="动态方法解析-1"><a href="#动态方法解析-1" class="headerlink" title="动态方法解析"></a>动态方法解析</h3><p>某种情况下声明的属性，使用了<em>@dynamic</em>修饰了。这时你可能需要动态的为你的方法提供实现。<br>dynamic告诉编译器与属性相关联的方法将动态提供。你可以选择实现resolveinstancemethod:和resolveclassmethod:<br>分别为实例和类方法提供一个选择器。OC方法是一个至少包含self和_cmd两个参数的C函数。当一个方法使用class_addMethod函数<br>的时候可以为一个类添加函数。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">void dynamicMethodIMP(id self, SEL _cmd) &#123;</div><div class="line">    // implementation ....</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>也可以把它作为一个方法添加到一个类中。<br>方法转发和动态方法解析在很大程度上是有关系的。一个类可以在消息转发机制起作用前动态提供一个方法。<br>如果respondstoselector：或instancesrespondtoselector：被调用时，动态方法解析器首先有机会为选择器提供IMP。<br>如果你只不过是实现了resolveInstanceMethod：想要通过转发机制转发特别的选择器，你应该为那些选择器返回NO；</p>
+<h3 id="动态加载"><a href="#动态加载" class="headerlink" title="动态加载"></a>动态加载</h3><p>OC在它于行的时候可以加载链接很多类和类别。加入的新代码和一开始加载的类和类别做相同处理。<br>在Cocoa中，动态加载经常被用于程序定制。别人修改你在运行时加载的程序；有助于你允许但没有定义的内容展示，<br>就是你提供框架别人提供代码。</p>
+<h2 id="消息转发"><a href="#消息转发" class="headerlink" title="消息转发"></a>消息转发</h2><p>向不处理该消息的对象发送一个消息是一个错误。然而，在宣布错误之前，运行时系统给接受对象一个第二次机会来处理消息。</p>
+<h3 id="转发"><a href="#转发" class="headerlink" title="转发"></a>转发</h3><p>在认识到一个错误之前运行时会给对象发送一个带有NSInvocation对象作为唯一参数的forwardInvocation：消息。这个<br>NSInvocation封装了原始的消息，参数通过它传递。<br>你可以通过实现forwardInvocation：方法制定一个默认的响应或者通过其他方式来避免这个错误。正如他名字那样，forwardInvocation：<br>通常用于转发消息给另一个对象。<br>注意： <strong>forwardInvocation:方法只能处理那些名义上没有存在调用方法的消息。</strong>比如向你的对象转发吃饭消息给另外一个对象，它<br>不能有自己的吃饭方法。如果有，消息永远不会到达nominalreceiver</p>
+<h3 id="转发和多继承"><a href="#转发和多继承" class="headerlink" title="转发和多继承"></a>转发和多继承</h3><p>转发模拟继承，可为OC程序提供多继承效果。<br>一个对象响应一个消息可以通过借用或者继承其他类的方法实现，转发消息的对象因此”继承”来自两个继承层次结构的方法，<br>一个是自己的分支，另一个是响应这个消息的对象。在上面的示例中，这看起来就像是战士类继承自外交官以及自己的超类。<br>转发提供了大多数你想从多继承的功能。然而，两者之间最大的区别在于：多继承是结合不同的功能在一个对象中。它倾向于大的，多方面的对象<br>。另一方面，转发机制将不同的功能分配给不同的对象。它把大的问题分解成小的对象，但是通过对消息发送者透明来吧这些对象关联起来。</p>
+<h3 id="代理对象"><a href="#代理对象" class="headerlink" title="代理对象"></a>代理对象</h3><p>转发不仅可以模仿多继承，也使开发轻量级的代表或者”覆盖”更大量的对象的对象。代理就代表了其他的对象，筛选传递给他的消息。</p>
+<h1 id="RunLoop"><a href="#RunLoop" class="headerlink" title="RunLoop"></a>RunLoop</h1><p>说到Runtime就不得不提一句RunLoop了。<br>RunLoop作为iOS中一个基础组件和线程有这千丝万缕的关系，同时也是很多常见技术的幕后功臣。尽管平时很少直接使用RunLoop，<br>但是理解RunLoop可以帮助我们更好的利用多线程编程模型，同时也可以帮助我们解答日常开发中的一些疑惑。</p>
+<h2 id="开源的RunLoopRef"><a href="#开源的RunLoopRef" class="headerlink" title="开源的RunLoopRef"></a>开源的RunLoopRef</h2><p>通常所说的RunLoop指的是NSRunLoop或者CFRunLoopRef,CFRunLoopRef是纯C的函数，而NSRunLoop仅仅是CFRunLoopRef的OC封装。<br>并未提供额外的其他功能，因此下面主要分析CFRunLoopRef。<br>从开源的CFRunLoop代码可以看出CFRunLoopRef其实就是<strong><strong>CFRunloop这个结构体指针(按照OC的思路我们可以将RunLoop看成一个<br>对象)，这个对象的运行才是我们通常意义上说的运行循环，核心方法是</strong>CFRunloopRun()</strong>，为了便于阅读就不再直接贴源代码，放一段<br>伪代码方便大家阅读：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line">int32_t <span class="function"><span class="title">__CFRunLoopRun</span></span>() &#123;</div><div class="line">    //通知即将进入RunLoop</div><div class="line">    __CFRunLoopDoObservers(KCFRunLoopEntry);</div><div class="line"></div><div class="line">    <span class="keyword">do</span> &#123;</div><div class="line">        //通知将要处理timer和<span class="built_in">source</span></div><div class="line">        __CFRunLoopDoObservers(KCFRunLoopBeforeTimers);</div><div class="line">        __CFRunLoopDoObservers(KCFRunLoopBeforeSources);</div><div class="line"></div><div class="line">        //处理非延迟的主线程调用</div><div class="line">        __CFRunLoopDoBlocks();</div><div class="line">        //处理Source0事件</div><div class="line">        __CFRunLoopDoSource0();</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (sourceHandleThisLoop) &#123;</div><div class="line">            __CFRunLoopDoBlocks();</div><div class="line">        &#125;</div><div class="line">        //如果有Source1（基于port）处于ready状态，直接处理这个Source1然后跳转去处理消息。</div><div class="line">        <span class="keyword">if</span> (__Source0DidDispatchPortLastTime) &#123;</div><div class="line">            Boolean hasMsg = __CFRunLoopServiceMachPort();</div><div class="line">            <span class="keyword">if</span> (hasMsg) goto handle_msg;</div><div class="line">        &#125;</div><div class="line">       // 通知 Observers: RunLoop 的线程即将进入休眠(sleep)。</div><div class="line">       <span class="keyword">if</span> (!sourceHandledThisLoop) &#123;</div><div class="line">           __CFRunLoopDoObservers(runloop, currentMode, kCFRunLoopBeforeWaiting);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // GCD dispatch main queue</div><div class="line">        CheckIfExistMessagesInMainDispatchQueue();</div><div class="line"></div><div class="line">        // 即将进入休眠</div><div class="line">        __CFRunLoopDoObservers(kCFRunLoopBeforeWaiting);</div><div class="line"></div><div class="line">        // 等待内核mach_msg事件</div><div class="line">        mach_port_t wakeUpPort = SleepAndWaitForWakingUpPorts();</div><div class="line"></div><div class="line">        / 等待。。。</div><div class="line"></div><div class="line">        // 从等待中醒来</div><div class="line">        __CFRunLoopDoObservers(kCFRunLoopAfterWaiting);</div><div class="line"></div><div class="line">         // 处理因timer的唤醒</div><div class="line">        <span class="keyword">if</span> (wakeUpPort == timerPort)</div><div class="line">         __CFRunLoopDoTimers();</div><div class="line"></div><div class="line">        // 处理异步方法唤醒,如dispatch_async</div><div class="line">         <span class="keyword">else</span> <span class="keyword">if</span> (wakeUpPort == mainDispatchQueuePort)</div><div class="line">         __CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__()</div><div class="line"></div><div class="line">        // 处理Source1</div><div class="line">        <span class="keyword">else</span></div><div class="line">         __CFRunLoopDoSource1();</div><div class="line"></div><div class="line">        // 再次确保是否有同步的方法需要调用</div><div class="line">        __CFRunLoopDoBlocks();</div><div class="line">    &#125; <span class="keyword">while</span> (!stop &amp;&amp; !timeout);</div><div class="line">    //通知即将退出runloop</div><div class="line">    __CFRunLoopDoObservers(CFRunLoopExit);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="Runloop-Mode"><a href="#Runloop-Mode" class="headerlink" title="Runloop Mode"></a>Runloop Mode</h3><p>从源码很容易看出，Runloop总是运行在某种特定的CFRunLoopModeRef下（每次运行<strong><strong>CFRunLoopRun()函数必须制定mode）。<br>而通过CFRunloopRef对应结构体的定义可以很容易知道每种Runloop都可以包含若干个mode，每个Mode又包含Source/Timer/Observer。<br>每次调用Runloop的主函数</strong>CFRunLoopRun()时必须指定一种Mode，这个Mode称为_currentMode</strong>，当切换Mode时必须退出当前Mode，<br>然后重新进入Runloop以保证不同Mode的Source/Timer/Observer互不影响。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">struct __CFRunLoop &#123;</div><div class="line">        CFRuntimeBase _base;</div><div class="line">        pthread_mutex_t _lock;          /* locked <span class="keyword">for</span> accessing mode list */</div><div class="line">        __CFPort _wakeUpPort;           // used <span class="keyword">for</span> CFRunLoopWakeUp</div><div class="line">        Boolean _unused;</div><div class="line">        volatile _per_run_data *_perRunData;              // reset <span class="keyword">for</span> runs of the run loop</div><div class="line">        pthread_t _pthread;</div><div class="line">        uint32_t _winthread;</div><div class="line">        CFMutableSetRef _commonModes;</div><div class="line">        CFMutableSetRef _commonModeItems;</div><div class="line">        CFRunLoopModeRef _currentMode;</div><div class="line">        CFMutableSetRef _modes;</div><div class="line">        struct _block_item *_blocks_head;</div><div class="line">        struct _block_item *_blocks_tail;</div><div class="line">        CFAbsoluteTime _runTime;</div><div class="line">        CFAbsoluteTime _sleepTime;</div><div class="line">        CFTypeRef _counterpart;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    struct __CFRunLoopMode &#123;</div><div class="line">        CFRuntimeBase _base;</div><div class="line">        pthread_mutex_t _lock;  /* must have the run loop locked before locking this */</div><div class="line">        CFStringRef _name;</div><div class="line">        Boolean _stopped;</div><div class="line">        char _padding[3];</div><div class="line">        CFMutableSetRef _sources0;</div><div class="line">        CFMutableSetRef _sources1;</div><div class="line">        CFMutableArrayRef _observers;</div><div class="line">        CFMutableArrayRef _timers;</div><div class="line">        CFMutableDictionaryRef _portToV1SourceMap;</div><div class="line">        __CFPortSet _portSet;</div><div class="line">        CFIndex _observerMask;</div><div class="line">    <span class="comment">#if USE_DISPATCH_SOURCE_FOR_TIMERS</span></div><div class="line">        dispatch_source_t _timerSource;</div><div class="line">        dispatch_queue_t _queue;</div><div class="line">        Boolean _timerFired; // <span class="built_in">set</span> to <span class="literal">true</span> by the <span class="built_in">source</span> when a timer has fired</div><div class="line">        Boolean _dispatchTimerArmed;</div><div class="line">    <span class="comment">#endif</span></div><div class="line">    <span class="comment">#if USE_MK_TIMER_TOO</span></div><div class="line">        mach_port_t _timerPort;</div><div class="line">        Boolean _mkTimerArmed;</div><div class="line">    <span class="comment">#endif</span></div><div class="line">    <span class="comment">#if DEPLOYMENT_TARGET_WINDOWS</span></div><div class="line">        DWORD _msgQMask;</div><div class="line">        void (*_msgPump)(void);</div><div class="line">    <span class="comment">#endif</span></div><div class="line">        uint64_t _timerSoftDeadline; /* TSR */</div><div class="line">        uint64_t _timerHardDeadline; /* TSR */</div><div class="line">    &#125;;</div></pre></td></tr></table></figure></p>
+<p>系统默认提供的Run Loop Modes有kCFRunLoopDefaultMode（NSDefaultRunLoopMode）和UITrackingRunLoopMode，需要切换到对应的Mode时只需要传入对应的名称即可。<br>前者是系统默认的Runloop Mode，例如进入iOS程序默认不做任何操作就出与这种Mode中，此时滑动ScrollView，主线程就切换到UITrackingRunLoopMode，<br>不再接受其他事件操作。但是对于我们开发者而言经常用到的Mode还有一个kCFRunLoopCommonModes（NSRunLoopCommonModes），其实这个并不是具体的mode，<br>而是一种组合模式，在iOS系统中默认包含了NSDefaultRunLoopMode和UITrackingRunLoopMode（<em>注意并不是Runloop会运行在<br>kCFRunLoopCommonModes这种模式下，而是相当于分别注册了NSDefaultRunLoopMode和UITrackingRunLoopMode</em>）</p>
+<h3 id="RunLoop与线程的关系"><a href="#RunLoop与线程的关系" class="headerlink" title="RunLoop与线程的关系"></a>RunLoop与线程的关系</h3><p>Runloop是基于pthread进行管理的，pthread是基于c的跨平台多线程操作底层的API。他是mach thread的上层封装，和NSThread一一对应（而<br>NSThread是一套面向对象API，所以在iOS开发中我们也几乎不用直接使用pthread）。</p>
+<h3 id="RunLoop应用"><a href="#RunLoop应用" class="headerlink" title="RunLoop应用"></a>RunLoop应用</h3><h4 id="NSTimer"><a href="#NSTimer" class="headerlink" title="NSTimer"></a>NSTimer</h4><p>前面提到的Timer Source作为事件源，事实上它的上层对应就是NSTimer（其实就是CFRunloopTimerRef）这个开发者经常用到的定时器（底层基于使用mk_timer实现），<br>甚至很多开发者接触RunLoop还是从NSTimer开始的，其实NSTimer定时器的触发正是基于RunLoop运行的，所以使用NSTimer之前必须注册到RunLoop，但RunLoop为了节省资源<br>并不会在非常准确的时间调用定时器，如果一个任务执行时间过长，那么当错过一个时间点后只能等到下一个时间点执行，并不会延后执行</p>
+<h4 id="AutoreleasePool"><a href="#AutoreleasePool" class="headerlink" title="AutoreleasePool"></a>AutoreleasePool</h4><p>Autoreleasepool是另一个与RunLoop相关讨论较多的话题。其实从RunLoop源代码分析，Autoreleasepool与RunLoop并没有直接的关系，<br>之所以将两个话题放到一起讨论最主要的原因是因为在iOS应用启动后会注册两个Observer管理和维护Autoreleasepool。<br>不妨在app启动时打印currentRunLoop可以看到系统默认注册了很多Observer，其中有两个Observer的callout都是<br><strong>_wrapRunLoopWithAutoreleasePoolHandler</strong>，这两个是和自动释放池相关的两个监听。<br>第一个Observer会监听RunLoop的进入，它会回调objc_autoreleasePoolPush()向当前的AutoreleasePoolPage增加一个对象标示创建自动释放池。<br>第二个Observer会监听RunLoop的进入休眠和即将退出RunLoop两种状态，在即将休眠时会调用objc_autoreleasePoolPop()和objc_autoreleasePoolPush()根据情况<br>从最新加入的对象一直往前清理直到遇到标示对象。而在即将退出RunLoop时会调用objc_autoreleasePoolPop()释放自动释放池内对象。</p>
+<h4 id="UI更新"><a href="#UI更新" class="headerlink" title="UI更新"></a>UI更新</h4><p>如果打印App启动后的主线程RunLoop可以发现另外一个<strong>CFRunLoopObservermPv</strong>的Observer，这个监听专门负责UI变化后的更新，比如修改了frame、调整了<br>UI层级（UIView/CALayer）或者手动设置了setNeedsDisplay/SetNeedsLayout之后就会将这些操作提交到全局容器。这个Observer监听了主线程RunLoop的即将进入<br>休眠和退出状态，一旦进入这两种状态则会遍历所有UI更新并提交进行实际绘制更新。</p>
+<h4 id="GCD和RunLoop的关系"><a href="#GCD和RunLoop的关系" class="headerlink" title="GCD和RunLoop的关系"></a>GCD和RunLoop的关系</h4><p>在RunLoop的源代码中可以看到用到了GCD的相关内容，但是RunLoop本身和GCD并没有直接的关系。当调用了dispatch_async(dispatch_get_main_queue(),<br> &lt;#^(void)block#&gt;)时libDispatch会向主线程RunLoop发送消息唤醒RunLoop，RunLoop从消息中获取block，并且在<strong>CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE</strong>回调里执行这个block。<br> 不过这个操作仅限于主线程，其他线程dispatch操作是全部由libDispatch驱动的。</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2016/12/25/Cocoapods私有库静态包整理/" title= Cocoapods私有库与静态包整理 >
+                    <span>Previous Post</span>
+                    <span>Cocoapods私有库与静态包整理</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:1114388402@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/zcforios" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title="rss"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">Theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Runtime"><span class="toc-number">1.</span> <span class="toc-text">Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Runtime"><span class="toc-number">1.1.</span> <span class="toc-text">什么是Runtime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Runtime可以做什么"><span class="toc-number">1.1.1.</span> <span class="toc-text">Runtime可以做什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息传递机制"><span class="toc-number">1.2.</span> <span class="toc-text">消息传递机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#objc-msgSend"><span class="toc-number">1.2.1.</span> <span class="toc-text">objc_msgSend</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用隐藏参数"><span class="toc-number">1.2.2.</span> <span class="toc-text">使用隐藏参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取方法地址"><span class="toc-number">1.2.3.</span> <span class="toc-text">获取方法地址</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态方法解析"><span class="toc-number">1.3.</span> <span class="toc-text">动态方法解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#动态方法解析-1"><span class="toc-number">1.3.1.</span> <span class="toc-text">动态方法解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#动态加载"><span class="toc-number">1.3.2.</span> <span class="toc-text">动态加载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息转发"><span class="toc-number">1.4.</span> <span class="toc-text">消息转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#转发"><span class="toc-number">1.4.1.</span> <span class="toc-text">转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#转发和多继承"><span class="toc-number">1.4.2.</span> <span class="toc-text">转发和多继承</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代理对象"><span class="toc-number">1.4.3.</span> <span class="toc-text">代理对象</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RunLoop"><span class="toc-number">2.</span> <span class="toc-text">RunLoop</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#开源的RunLoopRef"><span class="toc-number">2.1.</span> <span class="toc-text">开源的RunLoopRef</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Runloop-Mode"><span class="toc-number">2.1.1.</span> <span class="toc-text">Runloop Mode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RunLoop与线程的关系"><span class="toc-number">2.1.2.</span> <span class="toc-text">RunLoop与线程的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RunLoop应用"><span class="toc-number">2.1.3.</span> <span class="toc-text">RunLoop应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NSTimer"><span class="toc-number">2.1.3.1.</span> <span class="toc-text">NSTimer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AutoreleasePool"><span class="toc-number">2.1.3.2.</span> <span class="toc-text">AutoreleasePool</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UI更新"><span class="toc-number">2.1.3.3.</span> <span class="toc-text">UI更新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#GCD和RunLoop的关系"><span class="toc-number">2.1.3.4.</span> <span class="toc-text">GCD和RunLoop的关系</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>Archive</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>Tag</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> Total : 5 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/25</span><a class="archive-post-title" href= "/2016/12/25/Cocoapods私有库静态包整理/" >Cocoapods私有库与静态包整理</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/20</span><a class="archive-post-title" href= "/2015/10/20/WKWebView与js的交互/" >WKWebView的使用</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/01/30/Runtime黑魔法/" >Runtime黑魔法</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/20</span><a class="archive-post-title" href= "/2015/04/20/ARC的理解/" >ARC理解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2015/03/03/iOS多线程总结/" >iOS GCD使用总结</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
